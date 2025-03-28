@@ -5,34 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <script>
         tailwind.config = { darkMode: 'class' };
     </script>
 </head>
-<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white transition-all">
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-all">
 
-    <div class="max-w-3xl mx-auto p-6">
+    <div class="max-w-2xl mx-auto mt-10 p-6 bg-white dark:bg-gray-800 shadow-xl rounded-xl">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold"> To-Do List</h1>
-            <button id="themeToggle" class="p-2 bg-gray-800 text-white rounded transition hover:bg-gray-700">🌙 Dark Mode</button>
+            <h1 class="text-3xl font-bold">📝 To-Do List</h1>
+            <button id="themeToggle" class="p-2 bg-gray-800 text-white rounded-lg transition hover:bg-gray-700 shadow-md">
+                ☀️ Light Mode
+            </button>
         </div>
 
-        <div class="flex flex-col space-y-2 mb-4">
-            <input id="taskInput" type="text" placeholder="Enter a task..." class="p-2 border rounded dark:bg-gray-800 dark:text-white">
-            <input id="dueDate" type="datetime-local" class="p-2 border rounded dark:bg-gray-800 dark:text-white">
-            <select id="category" class="p-2 border rounded dark:bg-gray-800 dark:text-white">
+        <!-- Task Input Section -->
+        <div class="space-y-4">
+            <input id="taskInput" type="text" placeholder="Enter a task..." 
+                class="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-400">
+            
+            <div class="flex space-x-2">
+                <input id="dueDate" type="datetime-local" 
+                    class="flex-1 p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-400">
+                <select id="category" 
+                    class="p-3 border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-400">
+                    <option value="Work">Work</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <button id="addTask" class="w-full p-3 bg-blue-500 text-white rounded-lg transition hover:bg-blue-600 shadow-md">
+                ➕ Add Task
+            </button>
+        </div>
+
+        <!-- Filter & Task Count -->
+        <div class="flex justify-between items-center mt-6">
+            <p id="taskCount" class="text-gray-500 dark:text-gray-300">No tasks yet.</p>
+            <select id="filterCategory" class="p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                <option value="All">All Categories</option>
                 <option value="Work">Work</option>
                 <option value="Personal">Personal</option>
                 <option value="Other">Other</option>
             </select>
-            <button id="addTask" class="px-4 py-2 bg-blue-500 text-white rounded transition hover:bg-blue-600">➕ Add Task</button>
         </div>
 
-        <div class="flex justify-between items-center mb-4">
-            <p id="taskCount" class="text-gray-600 dark:text-gray-400">No tasks yet.</p>
-        </div>
-
-        <ul id="taskList" class="space-y-2"></ul>
+        <!-- Task List -->
+        <ul id="taskList" class="mt-4 space-y-3"></ul>
     </div>
 
     <script>
@@ -44,10 +65,12 @@
         const categoryInput = document.getElementById('category');
         const taskList = document.getElementById('taskList');
         const taskCount = document.getElementById('taskCount');
+        const filterCategory = document.getElementById('filterCategory');
 
+        // Dark mode persistence
         if (localStorage.getItem('theme') === 'dark') {
             html.classList.add('dark');
-            themeToggle.textContent = '☀️ Light Mode';
+            themeToggle.textContent = '🌙 Dark Mode';
         }
 
         themeToggle.addEventListener('click', () => {
@@ -56,11 +79,14 @@
             themeToggle.textContent = html.classList.contains('dark') ? '☀️ Light Mode' : '🌙 Dark Mode';
         });
 
-        function loadTasks() {
+        function loadTasks(filter = "All") {
             let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
             taskList.innerHTML = '';
-            tasks.sort((a, b) => a.done - b.done);
-            tasks.forEach(task => addTaskToDOM(task));
+            tasks.forEach(task => {
+                if (filter === "All" || task.category === filter) {
+                    addTaskToDOM(task);
+                }
+            });
             updateTaskCount(tasks.length);
         }
 
@@ -70,8 +96,8 @@
 
         function addTaskToDOM(task) {
             const li = document.createElement('li');
-            li.classList = "flex justify-between items-center p-3 bg-white dark:bg-gray-800 rounded shadow-md transition-opacity duration-300";
-            li.dataset.taskId = task.id;
+            li.classList = "flex justify-between items-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md transition-all hover:scale-105";
+            li.setAttribute("data-id", task.id);
 
             const taskInfo = document.createElement('div');
             taskInfo.classList = "flex-grow px-2";
@@ -84,13 +110,13 @@
             buttonContainer.classList = "flex space-x-2";
 
             const doneBtn = document.createElement('button');
-            doneBtn.textContent = task.done ? "🔄 Undo" : "✅ Done";
-            doneBtn.classList = "text-green-500 transition hover:text-green-400";
+            doneBtn.innerHTML = task.done ? "🔄 Undo" : "✅ Done";
+            doneBtn.classList = "text-green-500 hover:text-green-400 transition-all";
             doneBtn.onclick = () => toggleDone(task.id);
 
             const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = "❌";
-            deleteBtn.classList = "text-red-500 transition hover:text-red-400";
+            deleteBtn.innerHTML = "❌";
+            deleteBtn.classList = "text-red-500 hover:text-red-400 transition-all";
             deleteBtn.onclick = () => confirmDelete(task.id);
 
             buttonContainer.appendChild(doneBtn);
@@ -105,7 +131,7 @@
             let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
             tasks = tasks.map(task => task.id == taskId ? { ...task, done: !task.done } : task);
             localStorage.setItem('tasks', JSON.stringify(tasks));
-            loadTasks();
+            loadTasks(filterCategory.value);
         }
 
         function confirmDelete(taskId) {
@@ -118,7 +144,7 @@
             let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
             tasks = tasks.filter(task => task.id != taskId);
             localStorage.setItem('tasks', JSON.stringify(tasks));
-            loadTasks();
+            loadTasks(filterCategory.value);
         }
 
         function addTask() {
@@ -133,12 +159,16 @@
 
             taskInput.value = '';
             dueDateInput.value = '';
-            loadTasks();
+            loadTasks(filterCategory.value);
         }
 
         addTaskBtn.addEventListener('click', addTask);
         taskInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') addTask();
+        });
+
+        filterCategory.addEventListener('change', () => {
+            loadTasks(filterCategory.value);
         });
 
         loadTasks();
