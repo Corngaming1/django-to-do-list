@@ -57,8 +57,10 @@ python manage.py migrate
 ```
 
 7️⃣ Start the Django Server
-!note: in order to run the server you must be in the backend use this command to do so: cd "djago-to-do/backend" (if you are already in to-do-list pt2 directory)
 Run the development server:
+
+!note: in order to run the server you must be in the backend use this command to do so: cd "djago-to-do/backend" (if you are already in to-do-list pt2 directory)
+
 ```bash
 python manage.py runserver
 ```
