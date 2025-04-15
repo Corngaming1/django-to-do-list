@@ -20,7 +20,7 @@ git clone https://github.com/YOUR_USERNAME/REPO_NAME.git
 2️⃣ Navigate into the Project Directory
 Move into the downloaded project folder:
 ```bash
-cd to-do-list-pt2
+cd "to-do-list-pt2"
 ```
 
 3️⃣ Create a Virtual Environment
@@ -57,6 +57,7 @@ python manage.py migrate
 ```
 
 7️⃣ Start the Django Server
+!note: in order to run the server you must be in the backend use this command to do so: cd "djago-to-do/backend" (if you are already in to-do-list pt2 directory)
 Run the development server:
 ```bash
 python manage.py runserver
