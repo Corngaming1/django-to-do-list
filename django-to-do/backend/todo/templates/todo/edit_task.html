@@ -16,7 +16,11 @@
             </div>
             <div class="mb-4">
                 <label class="block font-semibold">Due Date:</label>
-                <input type="date" name="due_date" value="{{ task.due_date|date:'Y-m-d' }}" class="w-full p-2 border rounded">
+                <input type="date" name="due_date" 
+                {%if task.due_date%} 
+                value="{{ task.due_date|date:'Y-m-d' }}" 
+                {%endif}
+                class="w-full p-2 border rounded">
 
             </div>
             <div class="mb-4">
