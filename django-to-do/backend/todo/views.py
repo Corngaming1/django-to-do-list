@@ -5,7 +5,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-
+from django.contrib.auth.models import User  # Import User model
+from django.http import HttpResponseRedirect  # Import HttpResponseRedirect
+from django.urls import reverse
 
 class SignUpView(CreateView):
     form_class = UserCreationForm
@@ -17,11 +19,33 @@ class SignUpView(CreateView):
         login(self.request, self.object)
         return response
     
+
+
+
+
 @login_required(login_url='/accounts/login/')
 
-
 def homepage(request):
-    return render(request, 'todo/homepage.html')  # Uses homepage.html
+    if request.user.is_authenticated:
+        # This logic is for authenticated users
+        return render(request, 'todo/homepage.html')  # Display homepage for authenticated users
+    else:
+        # This logic is for guest users
+        return render(request, 'todo/homepage.html')  # Display homepage for guest users
+
+def guest_login(request):
+    # If the user is already logged in, redirect to the task list
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('task-list'))
+
+    # If guest user doesn't exist, create one
+    guest_user, created = User.objects.get_or_create(username="guest")
+    
+    # Log the guest user in
+    login(request, guest_user)
+    
+    # Redirect to task list or homepage
+    return HttpResponseRedirect(reverse('homepage'))  # Make sure this points to your task list or homepage
 
 def index(request):
     return render(request, 'todo/index.html')  # Your task list page

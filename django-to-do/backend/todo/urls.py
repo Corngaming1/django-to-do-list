@@ -13,5 +13,6 @@ urlpatterns = [
     path('delete/<int:task_id>/', views.delete_task, name='delete_task'),
     path('edit/<int:task_id>/', views.edit_task, name='edit_task'),
     path('accounts/signup/', views.SignUpView.as_view(), name='signup'),
+     path('guest-login/', views.guest_login, name='guest-login'),
 ]
 
