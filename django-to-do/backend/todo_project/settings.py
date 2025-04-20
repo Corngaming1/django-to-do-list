@@ -56,7 +56,7 @@ ROOT_URLCONF = 'todo_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'todo', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,3 +128,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = 'static/'  # ✅ Ensure STATIC_URL is defined
 STATICFILES_DIRS = [os.path.join(os.path.dirname(BASE_DIR), "frontend")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # ✅ Required for collectstatic
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'

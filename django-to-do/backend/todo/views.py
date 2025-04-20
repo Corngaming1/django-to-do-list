@@ -1,5 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Task
+from django.views.generic.edit import CreateView
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login
+
+
+class SignUpView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'registration/signup.html'
+    success_url = reverse_lazy('task-list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        login(self.request, self.object)
+        return response
+    
+@login_required(login_url='/accounts/login/')
+
 
 def homepage(request):
     return render(request, 'todo/homepage.html')  # Uses homepage.html
@@ -33,3 +52,4 @@ def edit_task(request, task_id):
         return redirect('home')  # or your homepage route name
 
     return render(request, 'todo/edit_task.html', {'task': task})
+

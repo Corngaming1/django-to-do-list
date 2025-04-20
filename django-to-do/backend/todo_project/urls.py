@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib import admin
+from django.urls import path, include
+from todo.views import SignUpView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),  # for login/logout
+    path('signup/', SignUpView.as_view(), name='signup'),    # your custom signup
     path('', include('todo.urls')),
 ]
