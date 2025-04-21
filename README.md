@@ -47,6 +47,9 @@ source venv/bin/activate
 
 5️⃣ Install Dependencies
 Install the required Python packages:
+
+Important: In order to install the requirements you must be in the backend use this command to do so: cd "djago-to-do/backend" (if you are already in to-do-list pt2 directory)
+
 ```bash
 pip install -r requirements.txt
 ```
