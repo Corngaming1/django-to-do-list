@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to Your To-Do List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-md max-w-xl w-full text-center space-y-6">
+
+        {% if user.is_authenticated %}
+            <p class="text-lg text-gray-700">
+                Welcome, <span class="font-semibold text-blue-600">{{ user.username }}</span>!
+            </p>
+        {% else %}
+            <div class="space-y-2">
+                <p class="text-gray-700">You are currently not logged in.</p>
+                <a href="{% url 'guest-login' %}" class="text-blue-500 hover:underline">Continue as Guest</a><br>
+                <a href="{% url 'login' %}" class="text-blue-500 hover:underline">Login</a> | 
+                <a href="{% url 'signup' %}" class="text-blue-500 hover:underline">Sign Up</a>
+            </div>
+        {% endif %}
+
+        <div>
+            <h1 class="text-4xl font-bold text-gray-800">Welcome to Your To-Do List</h1>
+            <p class="text-lg text-gray-600 mt-2">Stay organized, stay productive.</p>
+        </div>
+
+        <a href="{% url 'task-list' %}" class="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-600 transition duration-200">
+            🚀 Get Started
+        </a>
+
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="text-blue-500 hover:underline">Logout</button>
+        </form>
+        {% endif %}
+
+    </div>
+</body>
+</html>
