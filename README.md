@@ -20,7 +20,7 @@ git clone https://github.com/YOUR_USERNAME/REPO_NAME.git
 2️⃣ Navigate into the Project Directory
 Move into the downloaded project folder:
 ```bash
-cd "to-do-list-pt2"
+cd "django-to-do"
 ```
 
 3️⃣ Create a Virtual Environment
